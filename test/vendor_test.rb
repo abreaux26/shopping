@@ -8,6 +8,7 @@ class VendorTest < Minitest::Test
   def setup
     @vendor = Vendor.new("Rocky Mountain Fresh")
     @item1 = mock
+    @item2 = mock
   end
 
   def test_it_exists
@@ -43,5 +44,15 @@ class VendorTest < Minitest::Test
 
     expected = { @item1 => 55 }
     assert_equal expected, @vendor.inventory
+  end
+
+  def test_potential_revenue
+    @item1.stubs(:price).returns(0.75)
+    @item2.stubs(:price).returns(0.50)
+
+    @vendor.stock(@item1, 35)
+    @vendor.stock(@item2, 7)
+
+    assert_equal 29.75, @vendor.potential_revenue
   end
 end

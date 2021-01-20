@@ -15,4 +15,10 @@ class Vendor
   def stock(item, num_of_stock)
     @inventory[item] = check_stock(item) + num_of_stock
   end
+
+  def potential_revenue
+    @inventory.keys.sum do |item|
+      item.price * check_stock(item)
+    end
+  end
 end
