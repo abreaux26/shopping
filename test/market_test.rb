@@ -73,7 +73,6 @@ class MarketTest < Minitest::Test
     @vendor2.stubs(:inventory_items).returns([@item1])
     @vendor3.stubs(:inventory_items).returns([@item3])
 
-
     assert_equal [@item1, @item2, @item3], @market.list_of_items
   end
 
@@ -91,7 +90,6 @@ class MarketTest < Minitest::Test
     @market.stubs(:vendors_that_sell).with(@item2).returns([@vendor1])
     @market.stubs(:vendors_that_sell).with(@item3).returns([@vendor3])
 
-
     expected = {
       @item1 => { quantity: 100, vendors: [@vendor1, @vendor2]},
       @item2 => { quantity: 7, vendors: [@vendor1] },
@@ -99,5 +97,14 @@ class MarketTest < Minitest::Test
     }
 
     assert_equal expected, @market.total_inventory
+  end
+
+  def test_overstocked
+    add_vendors_to_market
+    @vendor1.stubs(:overstocked?).returns(true)
+    @vendor2.stubs(:overstocked?).returns(false)
+    @vendor3.stubs(:overstocked?).returns(false)
+
+    assert_equal true, @market.overstocked?(@item1, [@vendor1])
   end
 end

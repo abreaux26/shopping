@@ -43,4 +43,10 @@ class Market
       total_inventory_hash[item] = inventory(item)
     end
   end
+
+  def overstocked?(item, vendors_array)
+    vendors_array.any? do |vendor|
+      vendor.overstocked?(item)
+    end
+  end
 end

@@ -25,4 +25,8 @@ class Vendor
   def inventory_items
     @inventory.keys
   end
+
+  def overstocked?(item)
+    check_stock(item) > 50
+  end
 end

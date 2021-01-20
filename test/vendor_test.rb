@@ -62,4 +62,11 @@ class VendorTest < Minitest::Test
 
     assert_equal [@item1, @item2], @vendor.inventory_items
   end
+
+  def test_overstocked
+    @vendor.stock(@item1, 30)
+    @vendor.stock(@item1, 25)
+
+    assert_equal true, @vendor.overstocked?(@item1)
+  end
 end
