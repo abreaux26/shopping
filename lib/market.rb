@@ -73,4 +73,8 @@ class Market
   def sorted_item_list
     item_names_per_vendor.sort
   end
+
+  def sell(item, quantity)
+    quantity_per_item(item) > quantity
+  end
 end

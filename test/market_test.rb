@@ -167,4 +167,10 @@ class MarketTest < Minitest::Test
 
     assert_equal expected, @market.sorted_item_list
   end
+
+  def test_not_enough_quantity_sell
+    @market.stubs(:quantity_per_item).with(@item1).returns(100)
+    
+    assert_equal false, @market.sell(@item1, 200)
+  end
 end
