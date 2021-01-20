@@ -28,4 +28,20 @@ class VendorTest < Minitest::Test
     @vendor.stock(@item1, 30)
     assert_equal 30, @vendor.check_stock(@item1)
   end
+
+  def test_stock
+    @vendor.stock(@item1, 30)
+
+    expected = { @item1 => 30 }
+
+    assert_equal expected, @vendor.inventory
+  end
+
+  def test_add_num_of_stock_to_inventory
+    @vendor.stock(@item1, 30)
+    @vendor.stock(@item1, 25)
+
+    expected = { @item1 => 55 }
+    assert_equal expected, @vendor.inventory
+  end
 end
