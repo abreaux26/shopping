@@ -12,7 +12,12 @@ class MarketTest < Minitest::Test
     @vendor3 = mock
     @item1 = mock
     @item2 = mock
-    @vendor1.stubs(:stock).returns({@item1 => 35}, {@item2 => 7})
+  end
+
+  def add_vendors_to_market
+    @market.add_vendor(@vendor1)
+    @market.add_vendor(@vendor2)
+    @market.add_vendor(@vendor3)
   end
 
   def test_it_exists
@@ -33,11 +38,20 @@ class MarketTest < Minitest::Test
     @vendor1.stubs(:name).returns("Rocky Mountain Fresh")
     @vendor2.stubs(:name).returns("Ba-Nom-a-Nom")
     @vendor3.stubs(:name).returns("Palisade Peach Shack")
-    @market.add_vendor(@vendor1)
-    @market.add_vendor(@vendor2)
-    @market.add_vendor(@vendor3)
+    add_vendors_to_market
 
     expected = ["Rocky Mountain Fresh", "Ba-Nom-a-Nom", "Palisade Peach Shack"]
     assert_equal expected, @market.vendor_names
+  end
+
+  def test_vendors_that_sell
+    add_vendors_to_market
+    @vendor1.stubs(:inventory).returns({@item1 => 35}, {@item2 => 7})
+    @vendor2.stubs(:inventory).returns({@item1 => 35})
+    @vendor3.stubs(:inventory).returns({})
+
+    expected = [@vendor1, @vendor2]
+
+    assert_equal expected, @market.vendors_that_sell(@item1)
   end
 end
