@@ -38,7 +38,8 @@ class MarketTest < Minitest::Test
   def test_it_has_readable_attributes
     assert_equal 'South Pearl Street Farmers Market', @market.name
     assert_equal [], @market.vendors
-    assert_equal '20/01/2021', @market.date
+    @market.stubs(:date).returns('24/02/2020')
+    assert_equal '24/02/2020', @market.date
   end
 
   def test_add_vendor
