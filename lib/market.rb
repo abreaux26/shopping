@@ -61,4 +61,12 @@ class Market
       vendors_array.length > 1 && overstocked?(item, vendors_array)
     end.keys
   end
+
+  def item_names_per_vendor
+    @vendors.flat_map(&:sorted_inventory_items).uniq
+  end
+
+  def sorted_item_list
+    item_names_per_vendor.sort
+  end
 end

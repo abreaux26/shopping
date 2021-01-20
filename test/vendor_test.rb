@@ -6,7 +6,7 @@ require './lib/vendor'
 
 class VendorTest < Minitest::Test
   def setup
-    @vendor = Vendor.new("Rocky Mountain Fresh")
+    @vendor = Vendor.new('Rocky Mountain Fresh')
     @item1 = mock
     @item2 = mock
   end
@@ -16,7 +16,7 @@ class VendorTest < Minitest::Test
   end
 
   def test_it_has_readable_attributes
-    assert_equal "Rocky Mountain Fresh", @vendor.name
+    assert_equal 'Rocky Mountain Fresh', @vendor.name
     expected = {}
     assert_equal expected, @vendor.inventory
   end
@@ -68,5 +68,37 @@ class VendorTest < Minitest::Test
     @vendor.stock(@item1, 25)
 
     assert_equal true, @vendor.overstocked?(@item1)
+  end
+
+  def test_inventory_items_names
+    @vendor.stock(@item1, 30)
+    @vendor.stock(@item1, 25)
+    @vendor.stock(@item2, 7)
+
+    @item1.stubs(:name).returns('Tomato')
+    @item2.stubs(:name).returns('Peach')
+
+    expected = [
+      'Tomato',
+      'Peach'
+    ]
+
+    assert_equal expected, @vendor.inventory_items_names
+  end
+
+  def test_sorted_inventory_items
+    @vendor.stock(@item1, 30)
+    @vendor.stock(@item1, 25)
+    @vendor.stock(@item2, 7)
+
+    @item1.stubs(:name).returns('Tomato')
+    @item2.stubs(:name).returns('Peach')
+
+    expected = [
+      'Peach',
+      'Tomato'
+    ]
+
+    assert_equal expected, @vendor.sorted_inventory_items
   end
 end

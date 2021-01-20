@@ -6,13 +6,13 @@ require './lib/market'
 
 class MarketTest < Minitest::Test
   def setup
-    @market = Market.new("South Pearl Street Farmers Market")
+    @market = Market.new('South Pearl Street Farmers Market')
     @vendor1 = mock
     @vendor2 = mock
     @vendor3 = mock
-    @item1 = mock("item1")
-    @item2 = mock("item2")
-    @item3 = mock("item3")
+    @item1 = mock('item1')
+    @item2 = mock('item2')
+    @item3 = mock('item3')
   end
 
   def add_vendors_to_market
@@ -36,7 +36,7 @@ class MarketTest < Minitest::Test
   end
 
   def test_it_has_readable_attributes
-    assert_equal "South Pearl Street Farmers Market", @market.name
+    assert_equal 'South Pearl Street Farmers Market', @market.name
     assert_equal [], @market.vendors
   end
 
@@ -46,12 +46,12 @@ class MarketTest < Minitest::Test
   end
 
   def test_market_vendor_names
-    @vendor1.stubs(:name).returns("Rocky Mountain Fresh")
-    @vendor2.stubs(:name).returns("Ba-Nom-a-Nom")
-    @vendor3.stubs(:name).returns("Palisade Peach Shack")
+    @vendor1.stubs(:name).returns('Rocky Mountain Fresh')
+    @vendor2.stubs(:name).returns('Ba-Nom-a-Nom')
+    @vendor3.stubs(:name).returns('Palisade Peach Shack')
     add_vendors_to_market
 
-    expected = ["Rocky Mountain Fresh", "Ba-Nom-a-Nom", "Palisade Peach Shack"]
+    expected = ['Rocky Mountain Fresh', 'Ba-Nom-a-Nom', 'Palisade Peach Shack']
     assert_equal expected, @market.vendor_names
   end
 
@@ -71,7 +71,7 @@ class MarketTest < Minitest::Test
     @vendor1.stubs(:inventory).returns({@item1 => 35}, {@item2 => 7})
     @vendor2.stubs(:inventory).returns({@item1 => 35})
     @vendor3.stubs(:inventory).returns({@item3 => 10})
-    
+
     @vendor1.stubs(:check_stock).returns(42)
     @vendor2.stubs(:check_stock).returns(35)
 
@@ -134,5 +134,35 @@ class MarketTest < Minitest::Test
     }
 
     assert_equal expected, @market.vendors_per_item
+  end
+
+  def test_item_names_per_vendor
+    add_vendors_to_market
+    @vendor1.stubs(:sorted_inventory_items).returns(['Tomato'])
+    @vendor2.stubs(:sorted_inventory_items).returns(['Peach'])
+    @vendor3.stubs(:sorted_inventory_items).returns(['Banana Nice Cream'])
+
+    expected = [
+      'Tomato',
+      'Peach',
+      'Banana Nice Cream'
+    ]
+
+    assert_equal expected, @market.item_names_per_vendor
+  end
+
+  def test_sorted_item_list
+    add_vendors_to_market
+    @vendor1.stubs(:sorted_inventory_items).returns(['Tomato'])
+    @vendor2.stubs(:sorted_inventory_items).returns(['Peach'])
+    @vendor3.stubs(:sorted_inventory_items).returns(['Banana Nice Cream'])
+
+    expected = [
+      'Banana Nice Cream',
+      'Peach',
+      'Tomato'
+    ]
+
+    assert_equal expected, @market.sorted_item_list
   end
 end

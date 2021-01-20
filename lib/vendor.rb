@@ -29,4 +29,12 @@ class Vendor
   def overstocked?(item)
     check_stock(item) > 50
   end
+
+  def inventory_items_names
+    inventory_items.map(&:name)
+  end
+
+  def sorted_inventory_items
+    inventory_items_names.sort
+  end
 end
