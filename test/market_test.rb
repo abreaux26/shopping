@@ -21,6 +21,16 @@ class MarketTest < Minitest::Test
     @market.add_vendor(@vendor3)
   end
 
+  def inventory_items_vendors_that_sell
+    @vendor1.stubs(:inventory_items).returns([@item1, @item2])
+    @vendor2.stubs(:inventory_items).returns([@item1])
+    @vendor3.stubs(:inventory_items).returns([@item3])
+
+    @market.stubs(:vendors_that_sell).with(@item1).returns([@vendor1, @vendor2])
+    @market.stubs(:vendors_that_sell).with(@item2).returns([@vendor1])
+    @market.stubs(:vendors_that_sell).with(@item3).returns([@vendor3])
+  end
+
   def test_it_exists
     assert_instance_of Market, @market
   end
@@ -59,10 +69,11 @@ class MarketTest < Minitest::Test
   def test_quantity_per_item
     add_vendors_to_market
     @vendor1.stubs(:inventory).returns({@item1 => 35}, {@item2 => 7})
-    @vendor1.stubs(:check_stock).returns(42)
     @vendor2.stubs(:inventory).returns({@item1 => 35})
-    @vendor2.stubs(:check_stock).returns(35)
     @vendor3.stubs(:inventory).returns({@item3 => 10})
+    
+    @vendor1.stubs(:check_stock).returns(42)
+    @vendor2.stubs(:check_stock).returns(35)
 
     assert_equal 77, @market.quantity_per_item(@item1)
   end
@@ -81,14 +92,7 @@ class MarketTest < Minitest::Test
     @vendor1.stubs(:check_stock).returns(7)
     @vendor2.stubs(:check_stock).returns(93)
     @vendor3.stubs(:check_stock).returns(50)
-    #
-    @vendor1.stubs(:inventory_items).returns([@item1, @item2])
-    @vendor2.stubs(:inventory_items).returns([@item1])
-    @vendor3.stubs(:inventory_items).returns([@item3])
-
-    @market.stubs(:vendors_that_sell).with(@item1).returns([@vendor1, @vendor2])
-    @market.stubs(:vendors_that_sell).with(@item2).returns([@vendor1])
-    @market.stubs(:vendors_that_sell).with(@item3).returns([@vendor3])
+    inventory_items_vendors_that_sell
 
     expected = {
       @item1 => { quantity: 100, vendors: [@vendor1, @vendor2]},
@@ -106,5 +110,29 @@ class MarketTest < Minitest::Test
     @vendor3.stubs(:overstocked?).returns(false)
 
     assert_equal true, @market.overstocked?(@item1, [@vendor1])
+  end
+
+  def test_overstocked_items
+    add_vendors_to_market
+    inventory_items_vendors_that_sell
+
+    @vendor1.stubs(:overstocked?).returns(true)
+    @vendor2.stubs(:overstocked?).returns(false)
+    @vendor3.stubs(:overstocked?).returns(false)
+
+    assert_equal [@item1], @market.overstocked_items
+  end
+
+  def test_vendors_per_item
+    add_vendors_to_market
+    inventory_items_vendors_that_sell
+
+    expected = {
+      @item1 => [@vendor1, @vendor2],
+      @item2 => [@vendor1],
+      @item3 => [@vendor3]
+    }
+
+    assert_equal expected, @market.vendors_per_item
   end
 end

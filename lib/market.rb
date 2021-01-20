@@ -49,4 +49,16 @@ class Market
       vendor.overstocked?(item)
     end
   end
+
+  def vendors_per_item
+     list_of_items.each_with_object({}) do |item, vendors_per_item|
+       vendors_per_item[item] = vendors_that_sell(item)
+     end
+  end
+
+  def overstocked_items
+    vendors_per_item.select do |item, vendors_array|
+      vendors_array.length > 1 && overstocked?(item, vendors_array)
+    end.keys
+  end
 end
